@@ -1,6 +1,20 @@
 USE todo_db;
 
 -- function for calculating total number of students in a class
+DROP FUNCTION IF EXISTS students_in_class;
+DELIMITER //
+CREATE FUNCTION students_in_class(class_num VARCHAR(45))
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE count INT;
+    
+    RETURN count;
+END //
+DELIMITER ;
+
+SELECT students_in_class('shire') as num_of_students1;
+
 
 -- function for calculating total number of tasks (finished/unfinished)
 
