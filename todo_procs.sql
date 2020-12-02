@@ -3,21 +3,48 @@ USE todo_db;
 -- function for calculating total number of students in a class
 DROP FUNCTION IF EXISTS students_in_class;
 DELIMITER //
-CREATE FUNCTION students_in_class(class_num VARCHAR(45))
+CREATE FUNCTION students_in_class(class_num int)
 RETURNS INT
 DETERMINISTIC
 BEGIN
     DECLARE count INT;
-    
+    SELECT count(*) INTO count FROM class_students WHERE classId = class_num AND approved = 1; 
     RETURN count;
 END //
 DELIMITER ;
 
-SELECT students_in_class('shire') as num_of_students1;
+SELECT students_in_class(1) as num_of_students1;
 
 
--- function for calculating total number of tasks (finished/unfinished)
+-- function for calculating total number of unfinished tasks
+DROP FUNCTION IF EXISTS unfinished_tasks_num;
+DELIMITER //
+CREATE FUNCTION unfinished_tasks_num(student_num int)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE count INT;
+    SELECT count(*) INTO count FROM student_tasks WHERE studentId = student_num AND finished = 0; 
+    RETURN count;
+END //
+DELIMITER ;
 
+SELECT unfinished_tasks_num(1) as num_of_tasks_unfinished;
+
+
+DROP FUNCTION IF EXISTS finished_tasks_num;
+DELIMITER //
+CREATE FUNCTION finished_tasks_num(student_num int)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE count INT;
+    SELECT count(*) INTO count FROM student_tasks WHERE studentId = student_num AND finished = 1; 
+    RETURN count;
+END //
+DELIMITER ;
+
+SELECT finished_tasks_num(1) as num_of_tasks_finished;
 
 -- stored procedures are labled with one of the letters from CRUD
 -- to indicate which kind of action it is
@@ -126,11 +153,31 @@ CALL track_all_classes(1);
 -- of students registered for each class
 
 
--- U: for student to register for classes
+-- C: for student to register for classes
+DROP PROCEDURE IF EXISTS register_class;
+DELIMITER //
+CREATE PROCEDURE register_class(student_id INT, class_id INT)
+BEGIN
+    INSERT INTO class_students VALUES (class_id, student_id, 'pending');
+END //
+DELIMITER ;
 
+SELECT * FROM class_students as classes_for_student1 where studentId = 3;
+CALL register_class(3, 1);
+SELECT * FROM class_students as classes_for_student1 where studentId = 3;
 
 -- C: for student to register, aka create new student entry
+DROP PROCEDURE IF EXISTS register_student;
+DELIMITER //
+CREATE PROCEDURE register_student(std_password VARCHAR(45), name_first VARCHAR(45), name_last VARCHAR(45))
+BEGIN
+    INSERT INTO students VALUES (NULL, std_password, name_first, name_last, 1, 'pending');
+END //
+DELIMITER ;
 
+SELECT * FROM students;
+CALL register_student('foo', 'one', 'two');
+SELECT * FROM students;
 
 -- U: for teacher to update tasks
 
