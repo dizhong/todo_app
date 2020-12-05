@@ -219,14 +219,14 @@ SELECT * FROM class_students as classes_for_student1 where studentId = 3;
 -- C: for student to register, aka create new student entry
 DROP PROCEDURE IF EXISTS register_student;
 DELIMITER //
-CREATE PROCEDURE register_student(std_password VARCHAR(45), name_first VARCHAR(45), name_last VARCHAR(45))
+CREATE PROCEDURE register_student(username VARCHAR(45), std_password VARCHAR(45), name_first VARCHAR(45), name_last VARCHAR(45))
 BEGIN
-    INSERT INTO students VALUES (NULL, std_password, name_first, name_last, 1, 'pending');
+    INSERT INTO students VALUES (NULL, username, std_password, name_first, name_last, 1, 'pending');
 END //
 DELIMITER ;
 
 SELECT * FROM students;
-CALL register_student('foo', 'one', 'two');
+CALL register_student('s16', 'foo', 'one', 'two');
 SELECT * FROM students;
 
 -- C: for teacher to create a task

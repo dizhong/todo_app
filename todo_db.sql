@@ -8,6 +8,7 @@ USE todo_db;
 -- registration_approved: 0 == False, 1 == True, 2 == Pending
 CREATE TABLE IF NOT EXISTS students(
     studentId INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(45) UNIQUE NOT NULL,
     std_password VARCHAR(45) NOT NULL,
     name_first VARCHAR(45) NOT NULL,
     name_last VARCHAR(45) NOT NULL,
@@ -16,24 +17,25 @@ CREATE TABLE IF NOT EXISTS students(
     PRIMARY KEY (studentId)
 );
 
-INSERT INTO `students` VALUES (NULL, '12345', 'amy', 'wang', 1, 'approved'),
-                              (NULL, '67890', 'star', 'warehouse', 0, 'pending'),
-                              (NULL, '20486', 'true', 'isit', 0, 'approved'),
-                              (NULL, '29476', 'like', 'trees', 1, 'approved');
+INSERT INTO `students` VALUES (NULL, 's1', '12345', 'amy', 'wang', 1, 'approved'),
+                              (NULL, 's2', '67890', 'star', 'warehouse', 0, 'pending'),
+                              (NULL, 's3', '20486', 'true', 'isit', 0, 'approved'),
+                              (NULL, 's4', '29476', 'like', 'trees', 1, 'approved');
 
 
 -- create teachers table and populate it
 CREATE TABLE IF NOT EXISTS teachers(
     teacherId INT NOT NULL AUTO_INCREMENT,
+	username VARCHAR(45) UNIQUE NOT NULL,
     tea_password VARCHAR(45) NOT NULL,
     name_first VARCHAR(45) NOT NULL,
     name_last VARCHAR(45) NOT NULL,
     PRIMARY KEY (teacherId)
 );
 
-INSERT INTO `teachers` VALUES (NULL, '12345', 'pluto', 'death'),
-                              (NULL, '78901', 'strike', 'blow'),
-                              (NULL, '39583', 'pierce', 'through');
+INSERT INTO `teachers` VALUES (NULL, 'teacher1', '12345', 'pluto', 'death'),
+                              (NULL, 'teacher2', '78901', 'strike', 'blow'),
+                              (NULL, 'teacher3', '39583', 'pierce', 'through');
 
 
 -- create classes table and populate it
