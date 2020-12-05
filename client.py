@@ -8,18 +8,28 @@
 import pymysql
 
 
-try:
-    print("Please enter username (hint for myself: root): ")
+def login_credentials():
+    print("Please enter username: ")
     username_input = input()
     print("Please enter password: ")
     password_input = input()
-    print("Please enter database name (hint for myself: lotrfinal_1): ")
-    database_input = input()
+    return username_input, password_input
 
-    cnx = pymysql.connect(host='localhost', user=username_input,
-                          password=password_input,
-                      db=database_input, charset='utf8mb4',
-                          cursorclass=pymysql.cursors.DictCursor)
 
-except pymysql.err.OperationalError as err:
-    print('Error: %d: %s' % (err.args[0], err.args[1]))
+def main():
+    try:
+        cnx = pymysql.connect(host='localhost', user="root",
+                              password="4mnt8r3x",
+                              db="todo_db", charset='utf8mb4',
+                              cursorclass=pymysql.cursors.DictCursor)
+
+    except pymysql.err.OperationalError as err:
+        print('Error: %d: %s' % (err.args[0], err.args[1]))
+
+    # login / register
+
+    # operations??
+
+
+if __name__ == "__main__":
+    main()
