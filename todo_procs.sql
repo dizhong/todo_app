@@ -307,3 +307,35 @@ DELIMITER ;
 SELECT * FROM students;
 CALL delete_rejected_students();
 SELECT * FROM students;
+
+DROP PROCEDURE IF EXISTS all_teacher_usernames;
+DELIMITER //
+CREATE PROCEDURE all_teacher_usernames()
+BEGIN
+	SELECT username from teachers;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS all_student_usernames;
+DELIMITER //
+CREATE PROCEDURE all_student_usernames()
+BEGIN
+	SELECT username from students;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS student_id_and_password;
+DELIMITER //
+CREATE PROCEDURE student_id_and_password(username VARCHAR(45))
+BEGIN
+	SELECT studentId, std_password from students as s where s.username = username;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS teacher_id_and_password;
+DELIMITER //
+CREATE PROCEDURE teacher_id_and_password(username VARCHAR(45))
+BEGIN
+	SELECT teacherId, tea_password from teachers as t where t.username = username;
+END //
+DELIMITER ;
