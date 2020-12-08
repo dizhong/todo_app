@@ -44,6 +44,10 @@ def call_proc(proc_name, cnx, args=[]):
     cursor.close()
     return res
 
+def call_proc_and_print(proc_name, cnx, args=[]):
+    r = call_proc(proc_name, cnx, args)
+    for row in r:
+        print(row)
 
 def main():
     try:
@@ -90,6 +94,53 @@ def main():
                 print("registered")
                 
         print("Logged in as %s %s with id %s" % (login_type, username, logged_in_id))
+
+        task = None
+        while task != "logout":
+            if login_type == 'student':
+                task = input_one_of("an operation",
+                  ["view status",
+                   "unfinished tasks",
+                   "all tasks",
+                   "my classes",
+                   "register for class",
+                   "logout"
+                  ])
+                if   task == 'view status':
+                    call_proc_and_print('view_my_status', cnx, [logged_in_id])
+                elif task == 'unfinished tasks':
+                    call_proc_and_print('track_unfinished_tasks', cnx, [logged_in_id])
+                elif task == 'all tasks':
+                    call_proc_and_print('track_all_tasks', cnx, [logged_in_id])
+                elif task == 'my classes':
+                    call_proc_and_print('track_all_classes', cnx, [logged_in_id])
+                elif task == 'register for class':
+                    print("All available classes:")
+                    call_proc_and_print('view_available_classes', cnx, [])
+
+            elif login_type == 'teacher':
+                task = input_one_of("an operation",
+                  ["create a task",
+                   "delete a task",
+                   "view tasks",
+                   "update class registration",
+                   "update student registration",
+                   "delete rejected students",
+                   "logout"
+                  ])
+                if   task == 'create a task':
+                    pass
+                elif task == 'delete a task':
+                    pass
+                elif task == 'view tasks':
+                    call_proc_and_print('view_tasks', cnx, [])
+                elif task == 'update class registration':
+                    pass
+                elif task == 'update student registration':
+                    pass
+                elif task == 'delete rejected students':
+                    pass
+
 
     except pymysql.Error as err:
         print('Error: %d: %s' % (err.args[0], err.args[1]))
