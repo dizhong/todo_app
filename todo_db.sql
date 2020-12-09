@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS students(
 
 INSERT INTO `students` VALUES (NULL, 's1', '12345', 'amy', 'wang', 1, 'approved'),
                               (NULL, 's2', '67890', 'star', 'warehouse', 0, 'pending'),
-                              (NULL, 's3', '20486', 'true', 'isit', 0, 'approved'),
+                              (NULL, 's3', '20486', 'sam', 'will', 0, 'approved'),
                               (NULL, 's4', '29476', 'like', 'trees', 1, 'approved');
 
 
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS teachers(
     PRIMARY KEY (teacherId)
 );
 
-INSERT INTO `teachers` VALUES (NULL, 'teacher1', '12345', 'pluto', 'death'),
-                              (NULL, 'teacher2', '78901', 'strike', 'blow'),
-                              (NULL, 'teacher3', '39583', 'pierce', 'through');
+INSERT INTO `teachers` VALUES (NULL, 'teacher1', '12345', 'pluto', 'planet'),
+                              (NULL, 'teacher2', '78901', 'sun', 'star'),
+                              (NULL, 'teacher3', '39583', 'earth', 'planet');
 
 
 -- create classes table and populate it
@@ -46,9 +46,9 @@ CREATE TABLE IF NOT EXISTS classes(
     PRIMARY KEY (classId, teacherId)
 );
 
-INSERT INTO `classes` VALUES (NULL, 1, 'and what is the wonder'),
-                             (NULL, 1, 'i tell you the breeze'),
-                             (NULL, 3, 'SLAM');
+INSERT INTO `classes` VALUES (NULL, 1, 'physics'),
+                             (NULL, 1, 'biology'),
+                             (NULL, 3, 'math');
 
 
 
@@ -67,11 +67,11 @@ CREATE TABLE IF NOT EXISTS tasks(
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO `tasks` VALUES (NULL, 1, 'write about your feelings'),
-                           (NULL, 1, 'burn it with fire'),
-                           (NULL, 1, 'along with whats left of your hair'),
-                           (NULL, 1, 'it will never grow back'),
-                           (NULL, 2, 'now cry');
+INSERT INTO `tasks` VALUES (NULL, 1, 'falling apple'),
+                           (NULL, 1, 'black hole'),
+                           (NULL, 1, 'quantum'),
+                           (NULL, 1, 'cat'),
+                           (NULL, 2, 'marine life');
 
 
 -- create student_classes table and populate it?
