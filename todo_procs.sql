@@ -99,13 +99,11 @@ DROP PROCEDURE IF EXISTS track_unfinished_tasks;
 DELIMITER //
 CREATE PROCEDURE track_unfinished_tasks(chosen_id INT)
 BEGIN
-    SELECT tmc.taskId, descrip, title, finished, st.studentId
+    SELECT mc.taskId, descrip, title, finished, st.studentId
     FROM student_tasks as st 
-         JOIN (SELECT t.taskId, t.descrip, mc.subtitle, mc.title FROM tasks t JOIN 
-			      (SELECT m.subtitle, c.title, m.moduleId FROM modules m JOIN 
-                       classes c ON m.classId = c.classId) as mc
-                  ON t.moduleId = mc.moduleId) as tmc
-         ON st.taskId = tmc.taskId
+         JOIN (SELECT t.taskId, t.descrip, c.title FROM tasks t JOIN 
+                       classes c ON t.classId = c.classId) as mc
+         ON st.taskId = mc.taskId
     WHERE (st.studentId = chosen_id) and finished = 0;
 END //
 DELIMITER ;
@@ -118,13 +116,11 @@ DROP PROCEDURE IF EXISTS track_finished_tasks;
 DELIMITER //
 CREATE PROCEDURE track_finished_tasks(chosen_id INT)
 BEGIN
-    SELECT tmc.taskId, descrip, title, finished, st.studentId
+    SELECT mc.taskId, descrip, title, finished, st.studentId
     FROM student_tasks as st 
-         JOIN (SELECT t.taskId, t.descrip, mc.subtitle, mc.title FROM tasks t JOIN 
-			      (SELECT m.subtitle, c.title, m.moduleId FROM modules m JOIN 
-                       classes c ON m.classId = c.classId) as mc
-                  ON t.moduleId = mc.moduleId) as tmc
-         ON st.taskId = tmc.taskId
+         JOIN (SELECT t.taskId, t.descrip, c.title FROM tasks t JOIN 
+                       classes c ON t.classId = c.classId) as mc
+         ON st.taskId = mc.taskId
     WHERE (st.studentId = chosen_id) and finished = 1;
 END //
 DELIMITER ;
@@ -137,13 +133,11 @@ DROP PROCEDURE IF EXISTS track_all_tasks;
 DELIMITER //
 CREATE PROCEDURE track_all_tasks(chosen_id INT)
 BEGIN
-    SELECT tmc.taskId, descrip, title, finished, st.studentId
+    SELECT mc.taskId, descrip, title, finished, st.studentId
     FROM student_tasks as st 
-         JOIN (SELECT t.taskId, t.descrip, mc.subtitle, mc.title FROM tasks t JOIN 
-			      (SELECT m.subtitle, c.title, m.moduleId FROM modules m JOIN 
-                       classes c ON m.classId = c.classId) as mc
-                  ON t.moduleId = mc.moduleId) as tmc
-         ON st.taskId = tmc.taskId
+         JOIN (SELECT t.taskId, t.descrip, c.title FROM tasks t JOIN 
+                       classes c ON t.classId = c.classId) as mc
+         ON st.taskId = mc.taskId
     WHERE (st.studentId = chosen_id);
 END //
 DELIMITER ;
@@ -232,9 +226,9 @@ SELECT * FROM students;
 -- C: for teacher to create a task
 DROP PROCEDURE IF EXISTS create_task;
 DELIMITER //
-CREATE PROCEDURE create_task(moduleId INT, descript VARCHAR(45))
+CREATE PROCEDURE create_task(classId int, descript VARCHAR(45))
 BEGIN
-    INSERT INTO tasks VALUES (NULL, moduleId, descript);
+    INSERT INTO tasks VALUES (NULL, classId, descript);
 END //
 DELIMITER ;
 

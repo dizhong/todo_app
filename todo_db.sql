@@ -51,24 +51,6 @@ INSERT INTO `classes` VALUES (NULL, 1, 'and what is the wonder'),
                              (NULL, 3, 'SLAM');
 
 
--- create modules table and populate it
--- modules can be cruded by teacher
--- modules can be read by student
-CREATE TABLE IF NOT EXISTS modules(
-    moduleId INT NOT NULL AUTO_INCREMENT,
-    classId INT NOT NULL,
-    subtitle VARCHAR(45) NOT NULL,
-    PRIMARY KEY (moduleId),
-    CONSTRAINT of_class
-        FOREIGN KEY (classId)
-        REFERENCES classes (classId)
-        ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-INSERT INTO `modules` VALUES (NULL, 1, '1 beginning of the end'),
-                             (NULL, 1, '2 it all goes down from here'),
-                             (NULL, 2, '1 welcome to hell');
-
 
 -- create tasks table and populate it
 -- tasks can be created, viewed, updated and deleted by teacher 
@@ -76,12 +58,12 @@ INSERT INTO `modules` VALUES (NULL, 1, '1 beginning of the end'),
 -- tasks cannot be read by students
 CREATE TABLE IF NOT EXISTS tasks(
     taskId INT NOT NULL AUTO_INCREMENT,
-    moduleId INT NOT NULL,
+    classId INT NOT NULL,
     descrip VARCHAR(45) NOT NULL,
     PRIMARY KEY (taskId),
-    CONSTRAINT of_module
-        FOREIGN KEY (moduleId)
-        REFERENCES modules (moduleId)
+    CONSTRAINT of_class
+        FOREIGN KEY (classId)
+        REFERENCES classes (classId)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 

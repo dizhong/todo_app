@@ -146,7 +146,12 @@ def main():
                    "logout"
                   ])
                 if   task == 'create a task':
-                    pass
+                    classes = call_proc('view_available_classes', cnx, [])
+                    str_id_list = [str(row['classId']) for row in classes]
+                    chosen_id = int(input_one_of("class id", str_id_list))
+                    descript = input_varchar_45("task description")
+                    call_proc('create_task', cnx, [chosen_id, descript])
+                    print("task created")
                 elif task == 'delete a task':
                     pass
                 elif task == 'view tasks':
