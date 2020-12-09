@@ -63,6 +63,7 @@ def main():
         cursor = cnx.cursor()
         # login / register
         login_type = None
+        status = None
         username = None
         logged_in_id = False
         while not logged_in_id:
@@ -83,6 +84,7 @@ def main():
                     res = call_proc('student_id_and_password', cnx, [username])
                     db_password = res[0]['std_password']
                     user_id = res[0]['studentId']
+                    status = res[0]['registration_approved']
                     if db_password == password:
                         logged_in_id = user_id
 
@@ -97,7 +99,11 @@ def main():
 
         task = None
         while task != "logout":
-            if login_type == 'student':
+            if login_type == 'student' and status != 'approved':
+                print("your account status is " + status)
+                print("logging you out")
+                task = 'logout'
+            elif login_type == 'student' and status == 'approved':
                 task = input_one_of("an operation",
                   ["view status",
                    "unfinished tasks",
@@ -117,6 +123,17 @@ def main():
                 elif task == 'register for class':
                     print("All available classes:")
                     call_proc_and_print('view_available_classes', cnx, [])
+                    classes = call_proc('view_available_classes', cnx, [])
+                    str_id_list = [str(row['classId']) for row in classes]
+                    chosen_id = int(input_one_of("class id", str_id_list))
+                    student_classes = call_proc('track_all_classes', cnx, [logged_in_id])
+                    registered_class_ids = [row['classId'] for row in student_classes]
+                    if chosen_id in registered_class_ids:
+                        print("already registered")
+                    else:
+                        call_proc('register_class', cnx, [logged_in_id, chosen_id])
+                        print("successfully registered")
+                    
 
             elif login_type == 'teacher':
                 task = input_one_of("an operation",

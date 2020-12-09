@@ -328,7 +328,7 @@ DROP PROCEDURE IF EXISTS student_id_and_password;
 DELIMITER //
 CREATE PROCEDURE student_id_and_password(username VARCHAR(45))
 BEGIN
-	SELECT studentId, std_password from students as s where s.username = username;
+	SELECT studentId, std_password, registration_approved from students as s where s.username = username;
 END //
 DELIMITER ;
 
