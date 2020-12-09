@@ -8,7 +8,7 @@ RETURNS INT
 DETERMINISTIC
 BEGIN
     DECLARE count INT;
-    SELECT count(*) INTO count FROM class_students WHERE classId = class_num AND approved = 1; 
+    SELECT count(*) INTO count FROM class_students WHERE classId = class_num; 
     RETURN count;
 END //
 DELIMITER ;
@@ -46,7 +46,7 @@ DELIMITER ;
 
 SELECT finished_tasks_num(1) as num_of_tasks_finished;
 
--- function for calculating number of registerd/pending classes
+-- function for calculating number of registerd
 DROP FUNCTION IF EXISTS registered_classes_num;
 DELIMITER //
 CREATE FUNCTION registered_classes_num(student_num int)
@@ -54,7 +54,7 @@ RETURNS INT
 DETERMINISTIC
 BEGIN
     DECLARE count INT;
-    SELECT count(*) INTO count FROM class_students WHERE studentId = student_num AND approved = "approved"; 
+    SELECT count(*) INTO count FROM class_students WHERE studentId = student_num; 
     RETURN count;
 END //
 DELIMITER ;
@@ -62,19 +62,6 @@ DELIMITER ;
 SELECT registered_classes_num(1) as num_of_classes_registered;
 
 
-DROP FUNCTION IF EXISTS pending_classes_num;
-DELIMITER //
-CREATE FUNCTION pending_classes_num(student_num int)
-RETURNS INT
-DETERMINISTIC
-BEGIN
-    DECLARE count INT;
-    SELECT count(*) INTO count FROM class_students WHERE studentId = student_num AND approved = "pending"; 
-    RETURN count;
-END //
-DELIMITER ;
-
-SELECT pending_classes_num(1) as num_of_classes_pending;
 
 -- stored procedures are labled with one of the letters from CRUD
 -- to indicate which kind of action it is
@@ -87,7 +74,9 @@ DROP PROCEDURE IF EXISTS view_my_status;
 DELIMITER //
 CREATE PROCEDURE view_my_status(my_id INT)
 BEGIN
-select unfinished_tasks_num(my_id) as unfinished_tasks, finished_tasks_num(my_id) as finished_tasks, registered_classes_num(my_id) as registered_classes, pending_classes_num(my_id) as pending_classes;
+select unfinished_tasks_num(my_id) as unfinished_tasks, 
+       finished_tasks_num(my_id) as finished_tasks, 
+       registered_classes_num(my_id) as registered_classes;
 END //
 DELIMITER ;
 
@@ -144,24 +133,6 @@ DELIMITER ;
 
 CALL track_all_tasks(1);
 
--- R: for student to view list of their approved classes and the 
--- class's associated teachers
-DROP PROCEDURE IF EXISTS track_approved_classes;
-DELIMITER //
-CREATE PROCEDURE track_approved_classes(chosenId INT)
-BEGIN
-    SELECT classId, title, cstc.approved, cstc.name_first, cstc.name_last
-    FROM students s JOIN
-        (SELECT cs.studentId, cs.classId, cs.approved, tc.title, tc.name_first, tc.name_last FROM class_students cs JOIN
-            (SELECT c.classId, c.title, t.name_first, t.name_last FROM classes c JOIN teachers t
-            ON c.teacherId = t.teacherId) AS tc
-		ON cs.classId = tc.classId) as cstc
-	ON s.studentId = cstc.studentId
-	WHERE s.studentId = chosenId and approved = 1;
-END //
-DELIMITER ;
-
-CALL track_approved_classes(1);
 
 -- R: for student to view list of their all classes and the class's
 -- associated teachers
@@ -169,9 +140,9 @@ DROP PROCEDURE IF EXISTS track_all_classes;
 DELIMITER //
 CREATE PROCEDURE track_all_classes(chosenId INT)
 BEGIN
-    SELECT classId, title, cstc.approved, cstc.name_first, cstc.name_last
+    SELECT classId, title, cstc.name_first, cstc.name_last
     FROM students s JOIN
-        (SELECT cs.studentId, cs.classId, cs.approved, tc.title, tc.name_first, tc.name_last FROM class_students cs JOIN
+        (SELECT cs.studentId, cs.classId, tc.title, tc.name_first, tc.name_last FROM class_students cs JOIN
             (SELECT c.classId, c.title, t.name_first, t.name_last FROM classes c JOIN teachers t
             ON c.teacherId = t.teacherId) AS tc
 		ON cs.classId = tc.classId) as cstc
@@ -202,7 +173,7 @@ DROP PROCEDURE IF EXISTS register_class;
 DELIMITER //
 CREATE PROCEDURE register_class(student_id INT, class_id INT)
 BEGIN
-    INSERT INTO class_students VALUES (class_id, student_id, 'pending');
+    INSERT INTO class_students VALUES (class_id, student_id);
 END //
 DELIMITER ;
 
@@ -260,28 +231,14 @@ DELIMITER ;
 
 CALL view_tasks();
 
--- U: for teacher to approve student class registration
--- this also triggers an update of student-task table
-DROP PROCEDURE IF EXISTS update_class_registration;
-DELIMITER //
-CREATE PROCEDURE update_class_registration(student INT, class INT, approval VARCHAR(45))
-BEGIN
-    UPDATE class_students
-    SET approved = approval
-    WHERE studentId = student and classId = class;
-END //
-DELIMITER ;
-
-CALL update_class_registration(1, 2, "approved");
-CALL update_class_registration(1, 2, "pending");
 
 -- U: for teacher to approve student account registration
 DROP PROCEDURE IF EXISTS update_student_registration;
 DELIMITER //
 CREATE PROCEDURE update_student_registration(student INT, approval VARCHAR(45))
 BEGIN
-    UPDATE class_students
-    SET approved = approval
+    UPDATE students
+    SET registration_approved = approval
     WHERE studentId = student;
 END //
 DELIMITER ;

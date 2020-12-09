@@ -82,7 +82,6 @@ INSERT INTO `tasks` VALUES (NULL, 1, 'falling apple'),
 CREATE TABLE IF NOT EXISTS class_students(
     classId INT NOT NULL,
     studentId INT NOT NULL,
-    approved ENUM('approved', 'rejected', 'pending'),
     PRIMARY KEY (studentId, classId),
     CONSTRAINT class_exists
         FOREIGN KEY (classId)
@@ -94,12 +93,11 @@ CREATE TABLE IF NOT EXISTS class_students(
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO `class_students` VALUES (1, 1, 'approved'),
-									(2, 1, 'pending'),
-                                    (3, 1, 'approved'),
-                                    (1, 2, 'pending'),
-                                    (2, 3, 'rejected'),
-                                    (1, 4, 'pending');
+INSERT INTO `class_students` VALUES (1, 1),
+									(2, 1),
+                                    (3, 1),
+                                    (2, 3),
+                                    (1, 4);
 
 
 -- create student_tasks table and populate it?

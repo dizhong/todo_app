@@ -156,8 +156,8 @@ def main():
                     pass
                 elif task == 'view tasks':
                     call_proc_and_print('view_tasks', cnx, [])
-                elif task == 'update class registration':
-                    pass
+                #elif task == 'update class registration':
+                #    pass
                 elif task == 'update student registration':
                     pass
                 elif task == 'delete rejected students':
