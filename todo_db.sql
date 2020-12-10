@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS teachers(
     teacherId INT NOT NULL AUTO_INCREMENT,
 	username VARCHAR(45) UNIQUE NOT NULL,
     tea_password VARCHAR(45) NOT NULL,
-    name_first VARCHAR(45) NOT NULL,
-    name_last VARCHAR(45) NOT NULL,
+    teacher_name_first VARCHAR(45) NOT NULL,
+    teacher_name_last VARCHAR(45) NOT NULL,
     PRIMARY KEY (teacherId)
 );
 
@@ -82,7 +82,7 @@ INSERT INTO `tasks` VALUES (NULL, 1, 'falling apple'),
 CREATE TABLE IF NOT EXISTS class_students(
     classId INT NOT NULL,
     studentId INT NOT NULL,
-    PRIMARY KEY (studentId, classId),
+    PRIMARY KEY (classId, studentId),
     CONSTRAINT class_exists
         FOREIGN KEY (classId)
         REFERENCES classes (classId)
@@ -121,6 +121,12 @@ CREATE TABLE IF NOT EXISTS student_tasks(
 
 INSERT INTO `student_tasks` VALUES (1, 1, 1),
                                    (1, 2, 0),
-                                   (1, 3, 0);
+                                   (1, 3, 0),
+                                   (1, 4, 0),
+                                   (1, 5, 0),
+                                   (4, 1, 0),
+                                   (4, 2, 0),
+                                   (4, 3, 0),
+                                   (4, 4, 0);
 
 

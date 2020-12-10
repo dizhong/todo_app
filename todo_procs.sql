@@ -13,7 +13,7 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT students_in_class(1) as num_of_students1;
+-- SELECT students_in_class(1) as num_of_students1;
 
 
 -- function for calculating total number of unfinished/finished tasks
@@ -29,7 +29,7 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT unfinished_tasks_num(1) as num_of_tasks_unfinished;
+-- SELECT unfinished_tasks_num(1) as num_of_tasks_unfinished;
 
 
 DROP FUNCTION IF EXISTS finished_tasks_num;
@@ -44,7 +44,7 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT finished_tasks_num(1) as num_of_tasks_finished;
+-- SELECT finished_tasks_num(1) as num_of_tasks_finished;
 
 -- function for calculating number of registerd
 DROP FUNCTION IF EXISTS registered_classes_num;
@@ -59,7 +59,7 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT registered_classes_num(1) as num_of_classes_registered;
+-- SELECT registered_classes_num(1) as num_of_classes_registered;
 
 
 
@@ -80,7 +80,7 @@ select unfinished_tasks_num(my_id) as unfinished_tasks,
 END //
 DELIMITER ;
 
-CALL view_my_status(1);
+-- CALL view_my_status(1);
 
 -- R: create procedure? so that students can view unfinished tasks
 -- along with description, module, class
@@ -97,7 +97,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL track_unfinished_tasks(1);
+-- CALL track_unfinished_tasks(1);
 
 -- R: create procedure? so that students can view finished tasks
 -- along with description, module, class
@@ -114,7 +114,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL track_finished_tasks(1);
+-- CALL track_finished_tasks(1);
 
 -- R: create procedure? so that students can view all tasks
 -- along with description, module, class
@@ -131,7 +131,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL track_all_tasks(1);
+-- CALL track_all_tasks(1);
 
 
 -- R: for student to view list of their all classes and the class's
@@ -140,10 +140,10 @@ DROP PROCEDURE IF EXISTS track_all_classes;
 DELIMITER //
 CREATE PROCEDURE track_all_classes(chosenId INT)
 BEGIN
-    SELECT classId, title, cstc.name_first, cstc.name_last
+    SELECT classId, title, cstc.teacher_name_first, cstc.teacher_name_last
     FROM students s JOIN
-        (SELECT cs.studentId, cs.classId, tc.title, tc.name_first, tc.name_last FROM class_students cs JOIN
-            (SELECT c.classId, c.title, t.name_first, t.name_last FROM classes c JOIN teachers t
+        (SELECT cs.studentId, cs.classId, tc.title, tc.teacher_name_first, tc.teacher_name_last FROM class_students cs JOIN
+            (SELECT c.classId, c.title, t.teacher_name_first, t.teacher_name_last FROM classes c JOIN teachers t
             ON c.teacherId = t.teacherId) AS tc
 		ON cs.classId = tc.classId) as cstc
 	ON s.studentId = cstc.studentId
@@ -151,7 +151,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL track_all_classes(1);
+-- CALL track_all_classes(1);
 
 -- R: for student to view all available classes and number
 -- of students registered for each class
@@ -166,7 +166,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL view_available_classes();
+-- CALL view_available_classes();
 
 -- C: for student to register for classes
 DROP PROCEDURE IF EXISTS register_class;
@@ -177,9 +177,25 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM class_students as classes_for_student1 where studentId = 3;
-CALL register_class(3, 1);
-SELECT * FROM class_students as classes_for_student1 where studentId = 3;
+DROP TRIGGER IF EXISTS student_task_after_register;
+DELIMITER //
+CREATE TRIGGER student_task_after_register
+AFTER INSERT ON class_students FOR EACH ROW
+BEGIN
+    DECLARE studentId INT;
+    DECLARE classId INT;
+    DECLARE taskId INT;
+    SET studentId = NEW.studentId;
+    SET classId = NEW.classId;
+    INSERT INTO student_tasks VALUES (SELECT studentId, taskId
+                                      FROM studentId JOIN tasks t
+                                      WHERE t.classId = classId;
+END //
+DELIMITER ;
+
+-- SELECT * FROM class_students as classes_for_student1 where studentId = 3;
+-- CALL register_class(3, 1);
+-- SELECT * FROM class_students as classes_for_student1 where studentId = 3;
 
 -- C: for student to register, aka create new student entry
 DROP PROCEDURE IF EXISTS register_student;
@@ -190,9 +206,20 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM students;
-CALL register_student('s16', 'foo', 'one', 'two');
-SELECT * FROM students;
+-- SELECT * FROM students;
+-- CALL register_student('s16', 'foo', 'one', 'two');
+-- SELECT * FROM students;
+
+-- U: for student to update their todo task to be finished
+DROP PROCEDURE IF EXISTS update_task;
+DELIMITER //
+CREATE PROCEDURE update_task(finished_task INT, student INT)
+BEGIN
+    UPDATE student_tasks
+    SET finished = 1
+    WHERE studentId = student and taskId = finished_Task;
+END //
+DELIMITER ;
 
 -- C: for teacher to create a task
 DROP PROCEDURE IF EXISTS create_task;
@@ -203,9 +230,9 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM tasks;
-CALL create_task(1, "sample insert");
-SELECT * FROM tasks;
+-- SELECT * FROM tasks;
+-- CALL create_task(1, "sample insert");
+-- SELECT * FROM tasks;
 
 -- D: for teacher to delete tasks
 DROP PROCEDURE IF EXISTS delete_task;
@@ -216,9 +243,9 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM tasks;
-CALL delete_task(6);
-SELECT * FROM tasks;
+-- SELECT * FROM tasks;
+-- CALL delete_task(6);
+-- SELECT * FROM tasks;
 
 -- R: for teacher to view tasks
 DROP PROCEDURE IF EXISTS view_tasks;
@@ -229,7 +256,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL view_tasks();
+-- CALL view_tasks();
 
 
 -- U: for teacher to approve student account registration
@@ -243,8 +270,8 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL update_student_registration(2, "approved");
-CALL update_student_registration(2, "pending");
+-- CALL update_student_registration(2, "approved");
+-- CALL update_student_registration(2, "pending");
 
 -- D: for teacher to delete students whose registration were not approved
 DROP PROCEDURE IF EXISTS delete_rejected_students;
@@ -255,9 +282,9 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT * FROM students;
-CALL delete_rejected_students();
-SELECT * FROM students;
+-- SELECT * FROM students;
+-- CALL delete_rejected_students();
+-- SELECT * FROM students;
 
 DROP PROCEDURE IF EXISTS all_teacher_usernames;
 DELIMITER //
@@ -272,6 +299,14 @@ DELIMITER //
 CREATE PROCEDURE all_student_usernames()
 BEGIN
 	SELECT username from students;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS all_students;
+DELIMITER //
+CREATE PROCEDURE all_students()
+BEGIN
+	SELECT * from students;
 END //
 DELIMITER ;
 

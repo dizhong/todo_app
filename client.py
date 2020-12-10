@@ -6,7 +6,7 @@
 # import pymysql for a simple interface to a MySQL DB
 
 import pymysql
-
+import getpass, os
 
 def input_one_of(message, options):
     print("Please enter %s (one of %s)" % (message, options))
@@ -51,8 +51,14 @@ def call_proc_and_print(proc_name, cnx, args=[]):
 
 def main():
     try:
-        cnx = pymysql.connect(host='localhost', user="root",
-                              password="root",
+        print("Please enter database username: ")
+        username_input = input()
+        #print("Please enter database password: ")
+        #password_input = input()
+        password_input = getpass.getpass("Please enter database password (hidden): \n", stream = None)
+
+        cnx = pymysql.connect(host='localhost', user=username_input,
+                              password=password_input,
                               db="todo_db", charset='utf8mb4',
                               cursorclass=pymysql.cursors.DictCursor)
 
@@ -108,6 +114,7 @@ def main():
                   ["view status",
                    "unfinished tasks",
                    "all tasks",
+                   "task has finished",
                    "my classes",
                    "register for class",
                    "logout"
@@ -118,6 +125,11 @@ def main():
                     call_proc_and_print('track_unfinished_tasks', cnx, [logged_in_id])
                 elif task == 'all tasks':
                     call_proc_and_print('track_all_tasks', cnx, [logged_in_id])
+                elif task == 'task has finished':
+                    unfinished_tasks = call_proc('track_unfinished_tasks', cnx, [logged_in_id])
+                    str_task_list = [str(row['taskId']) for row in unfinished_tasks]
+                    chosen_task = int(input_one_of("id of finished task", str_task_list))
+                    call_proc("update_task", cnx, [chosen_task, logged_in_id])
                 elif task == 'my classes':
                     call_proc_and_print('track_all_classes', cnx, [logged_in_id])
                 elif task == 'register for class':
@@ -140,7 +152,6 @@ def main():
                   ["create a task",
                    "delete a task",
                    "view tasks",
-                   "update class registration",
                    "update student registration",
                    "delete rejected students",
                    "logout"
@@ -153,25 +164,31 @@ def main():
                     call_proc('create_task', cnx, [chosen_id, descript])
                     print("task created")
                 elif task == 'delete a task':
-                    pass
+                    tasks = call_proc("view_tasks", cnx, [])
+                    str_task_list = [str(row['taskId']) for row in tasks]
+                    chosen_task = int(input_one_of("task id", str_task_list))
+                    call_proc("delete_task", cnx, [chosen_task])
+                    print("task " + chosen_task + "deleted")
                 elif task == 'view tasks':
                     call_proc_and_print('view_tasks', cnx, [])
-                #elif task == 'update class registration':
-                #    pass
                 elif task == 'update student registration':
-                    pass
+                    call_proc_and_print("all_students", cnx, [])
+                    students = call_proc("all_students", cnx, [])
+                    str_id_list = [str(row['studentId']) for row in students]
+                    chosen_student = int(input_one_of("student id", str_id_list))
+                    approval = input_one_of("approval decision", ["approved", "pending", "rejected"])
+                    call_proc("update_student_registration", cnx, [chosen_student, approval])
                 elif task == 'delete rejected students':
-                    pass
+                    call_proc("delete_rejected_students", cnx, [])
 
 
     except pymysql.Error as err:
         print('Error: %d: %s' % (err.args[0], err.args[1]))
     finally:
+        cnx.commit()
         cnx.close()
 
-    
 
-    # operations??
 
 
 if __name__ == "__main__":
