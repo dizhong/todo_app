@@ -187,7 +187,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- SELECT * FROM class_students as classes_for_student1 where studentId = 3;
+-- SELECT * FROM class_students as classes_for_student1 where studentId = 3;student_tasks
 -- CALL register_class(3, 1);
 -- SELECT * FROM class_students as classes_for_student1 where studentId = 3;
 
@@ -221,6 +221,16 @@ DELIMITER //
 CREATE PROCEDURE create_task(classId int, descript VARCHAR(45))
 BEGIN
     INSERT INTO tasks VALUES (NULL, classId, descript);
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS student_task_after_creation;
+DELIMITER //
+CREATE TRIGGER student_task_after_creation
+AFTER INSERT ON tasks FOR EACH ROW
+BEGIN
+    INSERT INTO student_tasks SELECT cs.studentId, NEW.taskId, 0 FROM class_students cs
+                                      WHERE cs.classId = NEW.classId;
 END //
 DELIMITER ;
 

@@ -168,7 +168,7 @@ def main():
                     str_task_list = [str(row['taskId']) for row in tasks]
                     chosen_task = int(input_one_of("task id", str_task_list))
                     call_proc("delete_task", cnx, [chosen_task])
-                    print("task " + chosen_task + "deleted")
+                    print("task " + str(chosen_task) + " deleted")
                 elif task == 'view tasks':
                     call_proc_and_print('view_tasks', cnx, [])
                 elif task == 'update student registration':
