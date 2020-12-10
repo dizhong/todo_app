@@ -182,14 +182,8 @@ DELIMITER //
 CREATE TRIGGER student_task_after_register
 AFTER INSERT ON class_students FOR EACH ROW
 BEGIN
-    DECLARE studentId INT;
-    DECLARE classId INT;
-    DECLARE taskId INT;
-    SET studentId = NEW.studentId;
-    SET classId = NEW.classId;
-    INSERT INTO student_tasks VALUES (SELECT studentId, taskId
-                                      FROM studentId JOIN tasks t
-                                      WHERE t.classId = classId;
+    INSERT INTO student_tasks SELECT NEW.studentId, t.taskId, 0 FROM tasks t
+                                      WHERE t.classId = NEW.classId;
 END //
 DELIMITER ;
 
